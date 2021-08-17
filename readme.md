@@ -1,8 +1,8 @@
-#Requirements
+# Requirements
 * Linux machine
 * python + pip 3
 
-#Guide
+# Guide
 * Navigate to the project directory
 * run ``pip install -r requirements.txt``
 * inside the `finalProject` directory run ``python3 manage.py runserver``
