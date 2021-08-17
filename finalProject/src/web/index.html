@@ -1,0 +1,83 @@
+<html>
+        <head>
+            <meta charset="UTF-8">
+            <title>send word</title>
+			<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+            <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+			<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/spin.js/2.1.0/spin.min.js"></script>
+            <script type="text/javascript">
+                $(document).ready(function (e) {
+                    $('#upload').on('click', function () {
+						function encodeImgtoBase64(imgFile) {
+					 
+						  var reader = new FileReader();
+					 
+						  reader.onloadend = function() {
+					 
+							var img = reader.result;
+						  }
+						  reader.readAsDataURL(imgFile);
+						  $('#file').prop('files')[0] = img;
+						}
+					
+						var spinner = new Spinner({
+							color: "red"
+						}).spin(this);
+                        var file_data = $('#file').prop('files')[0];
+						//console.log(file_data);
+                        var form_data = new FormData();
+                        form_data.append('imageFile', file_data);
+						form_data.append('word', $("#text").val());
+                        $.ajax({
+                            url: 'http://localhost:8000/service/detectWord/', // point to server-side controller method
+                            dataType: 'text', // what to expect back from the server
+                            cache: false,
+                            contentType: false,
+                            processData: false,
+                            data: form_data,
+                            type: 'post',
+                            success: function (response) {
+								if (document.getElementById('imgResultDiv').children[0]){
+									document.getElementById('imgResultDiv').removeChild(document.getElementById('imgResultDiv').children[0]);
+									}
+								var img = document.createElement('img');
+								img.src = 'http://localhost:8000/ui/show?' + Math.random();
+								img.id = 'imgresult';
+								img.width="500";
+								img.height="600";
+								document.getElementById('imgResultDiv').appendChild(img);
+								spinner.stop();
+                                //$('#msg').html(response); // display success response from the server
+                            },
+                            error: function (response) {
+                                $('#msg').html(response); // display error response from the server
+                            }
+                        });
+						
+                    });
+                });
+            </script>
+		<style>
+		body {
+		  background-image: url('https://img.etimg.com/thumb/msid-73148518,width-650,imgsize-341462,,resizemode-4,quality-100/istock-484690454.jpg');
+		  background-repeat: no-repeat;
+		  background-attachment: fixed;
+		  background-size: cover;
+		}
+		</style>
+        </head>
+        <body>
+			<nav class="navbar navbar-light bg-light" >
+			  <a class="navbar-brand" href="#">
+				<img src="https://st.depositphotos.com/1010146/4308/v/450/depositphotos_43080715-stock-illustration-book-search-icon.jpg" width="30" height="30" class="d-inline-block align-top" alt="">
+				search word
+			  </a>
+			</nav>
+			<div class="col-xs-1 " align="center">
+				<input  class="btn btn-outline-secondary p-3 mb-2 bg-white text-dark" type="file" id="file" name="file" multiple onchane=encodeImgtoBase64(this)/>
+				<input  class="btn btn-outline-secondary p-3 mb-2 bg-white text-dark" type="text" id="text" name="file" multiple />
+				<button class="btn btn-secondary p-3 mb-2 bg-white text-dark" id="upload">Upload</button>
+			</div>
+			<div id='imgResultDiv' align="center" ></div>
+        </body>
+    </html>
